@@ -12,7 +12,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --open",
-    "build": "NODE_ENV=production webpack"
+    "build": "NODE_ENV=production & webpack"
   },
   "author": "",
   "license": "ISC",
