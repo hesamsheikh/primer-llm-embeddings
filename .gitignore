@@ -4,3 +4,4 @@ node_modules/
 *.cache
 python/**/__pycache__
 .github
+embeddings_qwen.pth
