@@ -3,6 +3,7 @@ import torch
 from transformers import AutoTokenizer
 import networkx as nx
 import plotly.graph_objects as go
+import random
 
 def find_similar_embeddings(target_embedding, n=10):
     """
@@ -97,7 +98,7 @@ token_id_list, prompt_embeddings, prompt_token_str = prompt_to_embeddings("""We 
 
 tokens_and_neighbors = {}
 for i in range(1, len(prompt_embeddings[0])):
-    token_results = find_similar_embeddings(prompt_embeddings[0][i], n=20)
+    token_results = find_similar_embeddings(prompt_embeddings[0][i], n=40)
     similar_embs = []
     for word, score in token_results:
         if word.strip().lower() != prompt_token_str[i].strip().lower():
@@ -126,15 +127,16 @@ for token, neighbors in tokens_and_neighbors.items():
     for neighbor in neighbors:
         G.add_edge(token, neighbor)
 
-# Generate positions using force-directed layout
-pos = nx.spring_layout(G, k=0.3, iterations=100)
+# Generate positions using spring layout with optimized parameters for atlas-like spread
+k = 2
+# iterations = 200
+# pos = nx.spring_layout(G, k=k)  # Increased k for more spread
+# works on colab
+pos = nx.forceatlas2_layout(G, max_iter=36)
 
-# pos = nx.circular_layout(G)
-# pos = nx.kamada_kawai_layout(G)
-
-# Define visualization dimensions
-viz_width = 300
-viz_height = 100
+# Define visualization dimensions 
+viz_width = 1500  # Increased for better spread
+viz_height = 500 # Increased for better spread
 
 # Extract edge coordinates and scale them
 edge_x, edge_y = [], []
@@ -142,40 +144,74 @@ for edge in G.edges():
     x0, y0 = pos[edge[0]]
     x1, y1 = pos[edge[1]]
     # Scale coordinates to fill the width/height
-    x0, x1 = x0 * viz_width, x1 * viz_width  # Scale x coordinates to width
-    y0, y1 = y0 * viz_height, y1 * viz_height    # Scale y coordinates to height
+    x0, x1 = x0 * viz_width, x1 * viz_width  # Scale x coordinates
+    y0, y1 = y0 * viz_height, y1 * viz_height # Scale y coordinates  
     edge_x.extend([x0, x1, None])
     edge_y.extend([y0, y1, None])
 
-
 # Node coordinates and data - scale the positions
-node_x = [pos[node][0] * viz_width for node in G.nodes()]  # Scale x to width
-node_y = [pos[node][1] * viz_height for node in G.nodes()]   # Scale y to height
+node_x = [pos[node][0] * viz_width for node in G.nodes()]
+node_y = [pos[node][1] * viz_height for node in G.nodes()]
 node_degrees = dict(G.degree())
-node_sizes = [(degree + 1) * 1 for degree in node_degrees.values()]
+# Assign colors using viridis colorscale
+colors = []
+components = list(nx.connected_components(G))
 
-# Node trace with custom colorscale
+# Create a mapping of nodes to their colors
+node_to_color = {}
+node_opacities = []  # List to store opacity values
+node_labels = []     # List to store node labels
+hover_labels = []    # List to store hover labels
+text_opacities = []  # List to store text opacities
+
+# Assign component index to each node for colorscale mapping
+node_component_indices = []
+for node in G.nodes():
+    # Find which component the node belongs to
+    for i, component in enumerate(components):
+        if node in component:
+            node_component_indices.append(i)
+            break
+    
+    # Set opacity and label based on whether it's a main token or neighbor
+    if node in tokens_and_neighbors:  # Main token
+        node_opacities.append(0.9)
+        text_opacities.append(1.0)
+        node_labels.append(node)
+        hover_labels.append(node)
+    else:  # Neighbor token
+        node_opacities.append(0.6)
+        text_opacities.append(0.0)  # Lower opacity for neighbor labels
+        node_labels.append(node)  # Show label with lower opacity
+        hover_labels.append(node)
+
+node_sizes = [(degree + 5) * 1 for degree in node_degrees.values()]  # Increased node sizes
+
+# Node trace with viridis colorscale
 node_trace = go.Scatter(
     x=node_x, y=node_y,
     mode='markers+text',
-    text=[node for node in G.nodes()],
+    text=node_labels,  # Show all labels
     textposition="top center",
+    textfont=dict(
+        color=[f'rgba(0,0,0,{opacity})' for opacity in text_opacities]  # Set text opacity
+    ),
     marker=dict(
         size=node_sizes,
-        color=list(node_degrees.values()),
-        colorscale='Viridis',
-        opacity=0.8,
+        color=node_component_indices,
+        colorscale='plasma',
+        opacity=node_opacities,  # Use the conditional opacities
         line_width=0.5
     ),
-    customdata=[[f"Connections: {deg}"] for deg in node_degrees.values()],
-    hovertemplate="<b>%{text}</b><br>%{customdata[0]}<extra></extra>",
+    customdata=[[hover_labels[i], ' | '.join(G.neighbors(node))] for i, node in enumerate(G.nodes())],
+    hovertemplate="<b>%{customdata[0]}</b><br>Similar tokens: %{customdata[1]}<extra></extra>",
     hoverlabel=dict(namelength=0)
 )
 
-# Edge trace (thin lines)
+# Edge trace with black edges
 edge_trace = go.Scatter(
     x=edge_x, y=edge_y,
-    line=dict(width=0.3, color='rgba(150,150,150,0.6)'),
+    line=dict(width=0.5, color='grey'),  # Set edge color to grey
     hoverinfo='none',
     mode='lines'
 )
@@ -202,7 +238,6 @@ fig = go.Figure(data=[edge_trace, node_trace],
                         scaleratio=1
                     )
                 ))
-
 fig.show()
 
 fig.write_html(r"src\fragments\token_visualization.html",
