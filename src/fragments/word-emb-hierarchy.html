@@ -1,0 +1,167 @@
+<!-- The container for your D3 visualization -->
+<div id="my-word-emb-vis" style="height: 500px; width: 1000px;"></div>
+
+<!-- Include D3 (if Distill hasn't already) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+<!-- Define your visualization styles, scoping to #my-word-emb-vis -->
+<style>
+  /* Scope all rules to the container ID to avoid conflicts */
+  #my-word-emb-vis .node circle {
+    fill: #fff;
+    stroke: #4682b4;
+    stroke-width: 2px;
+    transition: fill 0.3s, r 0.3s;
+    cursor: pointer;
+  }
+  #my-word-emb-vis .node text {
+    font-size: 14px;
+    transition: font-size 0.3s, fill 0.3s;
+    cursor: pointer;
+    pointer-events: none;
+  }
+  #my-word-emb-vis .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+    transition: stroke 0.3s, stroke-width 0.3s;
+  }
+  #my-word-emb-vis .parent {
+    font-weight: bold;
+  }
+  #my-word-emb-vis .node-highlighted circle {
+    fill: #d1e7ff;
+    r: 8;
+  }
+  #my-word-emb-vis .node-highlighted text {
+    font-size: 16px;
+    font-weight: bold;
+    fill: #4682b4;
+  }
+  #my-word-emb-vis .link-highlighted {
+    stroke: #4682b4;
+    stroke-width: 3px;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+    // Data structure representing the hierarchy
+    const data = {
+      name: "Word Embedding",
+      children: [
+        {
+          name: "Traditional Word Embedding",
+          children: [
+            { name: "Count Vector" },
+            { name: "TF-IDF" },
+            { name: "Co-Occurrence Matrix" }
+          ]
+        },
+        {
+          name: "Static Word Embedding",
+          children: [
+            { name: "Word2Vec" },
+            { name: "Glove" },
+            { name: "Fast Text" }
+          ]
+        },
+        {
+          name: "Contextualized Word Embedding",
+          children: [
+            { name: "ELMo" },
+            { name: "GPT & GPT 2" },
+            { name: "BERT" }
+          ]
+        }
+      ]
+    };
+
+    // Dimensions
+    const margin = { top: 10, right: 10, bottom: 10, left: 10 };
+
+    // Create tree layout
+    const treeLayout = d3.tree()
+      .size([height - margin.top - margin.bottom, width - margin.right - margin.left]);
+
+    // Convert data to hierarchy
+    const root = d3.hierarchy(data);
+    treeLayout(root);
+
+    // Create the SVG inside our container
+    const svg = d3.select("#my-word-emb-vis")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Create links
+    svg.selectAll(".link")
+      .data(root.links())
+      .enter()
+      .append("path")
+      .attr("class", "link")
+      .attr("d", d3.linkHorizontal()
+        .x(d => d.y)
+        .y(d => d.x)
+      );
+
+    // Create nodes
+    const node = svg.selectAll(".node")
+      .data(root.descendants())
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("id", d => `node-${d.data.name.replace(/\s+/g, '-').replace(/[&]/g, 'and').toLowerCase()}`)
+      .on("mouseover", function(event, d) {
+        // Highlight the current node
+        d3.select(this).classed("node-highlighted", true);
+
+        // Highlight all parent links and nodes
+        let ancestor = d;
+        while (ancestor.parent) {
+          const linkIndex = root.links().findIndex(link =>
+            link.source === ancestor.parent && link.target === ancestor
+          );
+          if (linkIndex !== -1) {
+            d3.selectAll(".link").each(function(linkData, i) {
+              if (i === linkIndex) {
+                d3.select(this).classed("link-highlighted", true);
+              }
+            });
+          }
+          d3.select(`#node-${ancestor.parent.data.name.replace(/\s+/g, '-').replace(/[&]/g, 'and').toLowerCase()}`)
+            .classed("node-highlighted", true);
+
+          ancestor = ancestor.parent;
+        }
+      })
+      .on("mouseout", function() {
+        // Remove all highlights
+        d3.selectAll(".node").classed("node-highlighted", false);
+        d3.selectAll(".link").classed("link-highlighted", false);
+      });
+
+    // Add circles to nodes
+    node.append("circle")
+      .attr("r", 6);
+
+    // Add text labels
+    node.append("text")
+      .attr("dy", ".35em")
+      .attr("x", d => {
+        if (d.depth === 0) return -15;
+        else if (d.depth === 1) return -15;
+        else return 15;
+      })
+      .attr("text-anchor", d => {
+        if (d.depth === 0) return "end";
+        else if (d.depth === 1) return "end";
+        else return "start";
+      })
+      .attr("class", d => d.depth <= 1 ? "parent" : "")
+      .text(d => d.data.name);
+  })();
+</script>

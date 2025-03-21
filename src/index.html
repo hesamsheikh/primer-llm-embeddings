@@ -44,7 +44,6 @@
             <p style="text-align: cekter; font-style: italic; margin-top: 10px; max-width: 900px; margin-left: auto; margin-right: auto;">
                 The embedding atlas of 50 random words and their closest tokens in the embedding space of `deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B`.
             </p>
-  
         </div>
     </d-title>
     <d-byline></d-byline>
@@ -52,7 +51,19 @@
         <d-contents>
         </d-contents>
         
-        <p>Welcome to the Distill Blog Template! This framework is based on the <a href="https://distill.pub/">distill.pub</a> design and has been adapted to make it easy for you to create beautiful, interactive technical blogs. Whether you're writing about machine learning, data science, physics, or any technical topic, this template provides the structure and components you need.</p>
+        <p>Large Language Models (LLM) evolve faster than you can blink. The methods you study today will be out the window in a few months.
+            But one aspect about LLMs that remains almost unchanged from the early days is the use of embeddings. Embeddings are the semantic backbone of LLMs,
+            the gate at which raw text is transformed into vectors of numbers that are understandable by the model. When you ask ChatGPT about the most important
+            life decisions, your words and tokens are transformed into a high-dimensional vector space where semantic relationships become mathematical relationships.
+        </p>
+
+        <figure class="fullscreen">
+            <div id="image-as-graph" style="display: grid; position: relative; justify-content: center;">
+              {{{fragment-word-emb-hierarchy}}}
+            </div>
+            <figcaption>embedding hierarchy</figcaption>
+          </figure>
+          
     
         <aside>Reading time: 10-15 minutes.</aside>
     
