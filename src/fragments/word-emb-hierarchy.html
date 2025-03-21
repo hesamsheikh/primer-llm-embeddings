@@ -1,5 +1,5 @@
 <!-- The container for your D3 visualization -->
-<div id="my-word-emb-vis" style="height: 500px; width: 1000px;"></div>
+<div id="my-word-emb-vis"></div>
 
 <!-- Include D3 (if Distill hasn't already) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -9,7 +9,7 @@
   /* Scope all rules to the container ID to avoid conflicts */
   #my-word-emb-vis .node circle {
     fill: #fff;
-    stroke: #4682b4;
+    stroke: #361E9A;
     stroke-width: 2px;
     transition: fill 0.3s, r 0.3s;
     cursor: pointer;
@@ -22,7 +22,7 @@
   }
   #my-word-emb-vis .link {
     fill: none;
-    stroke: #ccc;
+    stroke: #cb98af;
     stroke-width: 2px;
     transition: stroke 0.3s, stroke-width 0.3s;
   }
@@ -30,7 +30,7 @@
     font-weight: bold;
   }
   #my-word-emb-vis .node-highlighted circle {
-    fill: #d1e7ff;
+    fill: #361E9A;
     r: 8;
   }
   #my-word-emb-vis .node-highlighted text {
@@ -39,7 +39,7 @@
     fill: #4682b4;
   }
   #my-word-emb-vis .link-highlighted {
-    stroke: #4682b4;
+    stroke: #ce6d99;
     stroke-width: 3px;
   }
 </style>
@@ -71,14 +71,19 @@
           children: [
             { name: "ELMo" },
             { name: "GPT & GPT 2" },
-            { name: "BERT" }
+            { name: "BERT" },
+            { name: "DeepSeek" },
+            { name: "LLaMA" },
+            { name: "GPT-4" }
           ]
         }
       ]
     };
 
     // Dimensions
-    const margin = { top: 10, right: 10, bottom: 10, left: 10 };
+    const width = 800;
+    const height = 500;
+    const margin = { top: 20, right: 200, bottom: 20, left: 150 };
 
     // Create tree layout
     const treeLayout = d3.tree()
