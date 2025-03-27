@@ -2097,12 +2097,12 @@ d-appendix > distill-appendix {
       </div>
       <div >
           <h3>Affiliation</h3>
-          <div><a href="hf.co">University of Bologna</a>
+          <div><a href="https://www.unibo.it/en/homepage">University of Bologna</a>
           </div>
       </div>
       <div >
           <h3>Published</h3>
-          <div>Feb 19, 2025</div>
+          <div>March 27, 2025</div>
       </div>
     </div>
     <div class="side pdf-download">

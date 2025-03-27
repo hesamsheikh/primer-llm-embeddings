@@ -51,17 +51,19 @@
         <d-contents>
         </d-contents>
         
-        <p>Large Language Models (LLM) evolve faster than you can blink. The methods you study today will be out the window in a few months. But one aspect about LLMs that remains almost unchanged from the early days is the use of embeddings. Embeddings are the semantic backbone of LLMs, the gate at which raw text is transformed into vectors of numbers that are understandable by the model. When you ask ChatGPT about the most important life decisions, your words and tokens are transformed into a high-dimensional vector space where semantic relationships become mathematical relationships.</p>
+        <p>Embeddings are the semantic backbone of LLMs, the gate at which raw text is transformed into vectors of numbers that are understandable by the model. When you prompt an LLM to help you debug your code, your words and tokens are transformed into a high-dimensional vector space where semantic relationships become mathematical relationships.</p>
+        <aside>Reading time: 12-15 minutes.</aside>
 
-        <p>In this article we go through the basics of embeddings. We will cover how embeddings evolved over time from statistical methods to modern techniques, look at some of the most important embedding techniques, and look under the hood at how the embeddings of an LLM (DeepSeek-R1-Distill-Qwen-1.5B) look like in practice.</p>
+        <p>In this article we go through the fundamentals of embeddings. We will cover what embeddings are, how they evolved over time from statistical methods to modern techniques, check out how they're implemented in practice, look at some of the most important embedding techniques, and how the embeddings of an LLM (DeepSeek-R1-Distill-Qwen-1.5B) look like as a graph representation.</p>
 
-        <aside>Reading time: 10-15 minutes.</aside>
+        <p>This article includes interactive visualization and hands-on code examples. It also avoids verbosity and focuses on the core concepts for a fast-paced read to get straight to the point. The full code is available on my <a href="https://github.com/hesamsheikh/llm-mechanics">LLM Mechanics GitHub repository</a>.</p>
+        <aside>To contribute to the article, point out any mistakes, or suggest improvements, please check out<a href="https://huggingface.co/spaces/hesamation/primer-llm-embedding/discussions">Community</a>.</aside>
         
         <h2>What Are Embeddings?</h2>
         
         <p>Processing text for NLP tasks requires a numeric representation of each word. Most embedding methods come down to turning a word or token into a vector. What makes embedding techniques different from each other, is how they approach this word → vector conversion.</p>
 
-        <p>Embedding is not just for text, they can be applied to images, audio, or even graph data. In a general sense, embedding is the process of converting data into vectors. Of course, the embeddings and the embedding methods of each modality is different and unique. In this article, when we talk about "embeddings", we are referring to the text embeddings.</p>
+        <p>Embedding is not just for text, they can be applied to images, audio, or even graph data. In a general sense, embedding is the process of converting data [of any type] into vectors. Of course, the embedding methods of each modality is different and unique. In this article, when we talk about "embeddings", we are referring to the text embeddings.</p>
 
         <p>You might have heard embeddings in the context of large language models, but embeddings actually have a much longer history. Here is an overview of various embedding techniques:</p>
 
@@ -72,15 +74,12 @@
             <figcaption>Figure 1: Overview of different word embedding techniques.</figcaption>
         </figure>
 
-        <p>When reading about embeddings you may come across static vs. dynamic/contextualized embeddings. Static embeddings have a fixed representation for each word or token, regardless of the context they appear in.</p>
-
-        <p>Embeddings are the semantic backbone of LLMs because they work as the initial transformation from raw tokens into numeric vectors that models can understand. However, it's important to distinguish between token embeddings—which are the fixed vectors assigned to input tokens at the very beginning—and the contextual representations produced by the deeper layers of the model. While both are technically embeddings, token embeddings are static, whereas the intermediate hidden states evolve as they pass through each layer, incorporating the full context of the input. In some literature, these contextual outputs are also referred to as "embeddings," which can be confusing.</p>
+        <p>When reading about embeddings you may come across static vs. dynamic (or contextualized) embeddings. It's important to distinguish between token embeddings—which are the fixed vectors assigned to input tokens at the very beginning of an LLM—and the contextual representations produced by the deeper layers of the model. While both are technically embeddings, token embeddings are static, whereas the intermediate hidden states evolve as they pass through each layer, capturing the full context of the input. In some literature, these contextual outputs are also referred to as "embeddings," which can be confusing.</p>
+        <aside>In some literature, vector embeddings in the form of hidden states are also referred to as "embeddings," which can be confusing.</aside>
           
         <h2>What Makes a Good Embedding?</h2>
 
-        <p>When it comes to LLMs, embeddings can be thought of as the dictionary of their language. Better embeddings allow these models to understand the human language and communicate with us.</p>
-
-        <p>But what makes an embedding technique good? In other words, what makes an embedding ideal? Here are two major properties of an embedding technique:</p>
+        <p>When it comes to LLMs, embeddings can be thought of as the dictionary of their language. Better embeddings allow these models to understand the human language and communicate with us. But what makes an embedding technique good? In other words, what makes an embedding ideal? Here are two major properties of an embedding technique:</p>
 
         <h3>Semantic Representation</h3>
 
@@ -89,11 +88,11 @@
         <h3>Dimensionality</h3>
 
         <p>What should be the size of an embedding vector, 15, 50, 300? Striking the right balance is key. Smaller vectors (lower dimensions) are more efficient to keep in memory or to process, while bigger vectors (higher dimensions) can capture intricate relationships, but are prone to overfitting. For reference, GPT-2 model family has an embedding size of at least 768.</p>
-
+        <aside>For reference, DeepSeek-V3 and R1 have an embedding size of 7168.</aside>
 
         <h2>Traditional Embedding Techniques</h2>
 
-        <p>Almost every embedding technique relies on a large corpus of text data to extract the relationship of the word. Previously, embedding methods relied on statistic methods based on the co-occurance of words in a text. This was based on the assumption that if a pair of words often appear together then they must have a closer relationship. For us in the modern day who know how embeddings can be more sophisticated, this doesn't seem a reliable approach but they are simple methods that are not as computation-heavy as other techniques. One of such methods is:</p>
+        <p>Almost every embedding technique relies on a large corpus of text data to extract the relationship of the word. Previously, embedding methods relied on statistic methods based on the occurence or co-occurence of words in a text. This was based on the assumption that if a pair of words often appear together then they must have a closer relationship. For us in the modern day who know how embeddings can be more sophisticated, this doesn't seem a reliable approach, but they are simple methods that are not as computation-heavy as other techniques. One of such methods is:</p>
 
         <h3>TF-IDF (Term Frequency-Inverse Document Frequency)</h3>
 
@@ -447,7 +446,7 @@
 
         <p><strong>Thank you for reading through this article.</strong> If you found this useful, consider following me on <a href="https://x.com/Hesamation">X (Twitter)</a> and <a href="https://huggingface.co/hesamation">Hugging Face</a> to be notified about my next projects.</p>
 
-        <p>If you have any questions or feedback, please feel free to write in the community.</p>
+        <p>If you have any questions or feedback, please feel free to write in the <a href="https://huggingface.co/spaces/hesamation/primer-llm-embedding/discussions"></a>community</a>.</p>
     </d-article>
 
     <d-appendix>
