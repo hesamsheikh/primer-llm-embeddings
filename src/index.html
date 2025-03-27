@@ -333,6 +333,64 @@
                 </div>
         </details> 
 
+        <p>In the above code, we tokenize the sentence and print the embeddings of the tokens. The embeddings are 1536-dimensional vectors. Here is a simple example with the sentence: "HTML coders are not considered programmers":</p>
+        <figure>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-family: monospace; font-size: 14px;">
+                    <thead style="background-color: #f3f4f6;">
+                        <tr>
+                            <th style="padding: 8px; border: 1px solid #d0d7de;">token_id</th>
+                            <th style="padding: 8px; border: 1px solid #d0d7de;">token</th>
+                            <th style="padding: 8px; border: 1px solid #d0d7de;">Embedding Vector (1536 dimensions)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">151646</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">&nbsp;</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.027466, 0.002899, -0.005188 ... 0.021606</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">5835</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">HTML</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.018555, 0.000912, 0.010986 ... -0.015991</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">20329</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">#cod</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.026978, -0.012939, 0.021362 ... 0.042725</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">388</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">ers</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.012085, 0.001244, -0.069336 ... -0.001213</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">525</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">#are</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.001785, -0.008789, 0.006195 ... -0.016235</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">537</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">#not</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">0.016357, -0.039062, 0.045898 ... 0.001686</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">6509</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">#considered</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.000721, -0.021118, 0.027710 ... -0.051270</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">54846</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de;">#programmers</td>
+                            <td style="padding: 8px; border: 1px solid #d0d7de; font-size: 12px;">-0.047852, 0.057861, -0.069336 ... 0.005280</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <figcaption>Example of token embeddings for the sentence "HTML coders are not considered programmers"</figcaption>
+        </figure>
+
         <p>Finally, let's see how we can find the most similar embeddings to a particular word. As embeddings are vectors, we can use cosine similarity to find the most similar embeddings to a particular word. Then, we can use the <code>torch.topk</code> function to find the top k most similar embeddings.</p>
         
         <details style="background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; margin: 1em 0;">
@@ -343,6 +401,31 @@
                 <script src="https://gist.github.com/hesamsheikh/63bb68c69d094e7f905ba7358e2c0771.js"></script>
                 </div>
         </details> 
+
+        <h2>Embeddings as Graphs: A Network Analysis</h2>
+
+        <p>How can we view the embeddings? One method is to look at the embedding layer as a network, in which tokens are the nodes; if two token vectors are close then we assume their nodes are connected via an edge.</p>
+
+        <p>As an example, if we take the sentence <em>"AI agents will be the most hot topic of artificial intelligence in 2025."</em>, tokenize it, convert the tokens to embeddings, find the 20 most similar embeddings to each of the ones we had, the following will be the embedding graph:</p>
+
+        <figure class="fullscreen">
+            <div id="image-as-graph" style="display: grid; position: relative; justify-content: center;">
+              {{{fragment-token-visualization-sentence}}}
+            </div>
+            <figcaption>Figure 2: Visualization of the embedding graph for the sentence "AI agents will be the most hot topic of artificial intelligence in 2025."</figcaption>
+        </figure>
+
+        <p>You can actually see a more comprehensive example at the beginning of the article in which 50 tokens and their closest tokens are mapped out.</p>
+
+        <p>A token or word such as "list" may have many different variations with their own embeddings, such as "_list", "List", and many more:</p>
+
+        <figure class="fullscreen">
+            <div id="image-as-graph" style="display: grid; position: relative; justify-content: center;">
+              {{{fragment-token-visualization-list}}}
+            </div>
+            <figcaption>Figure 3: The word “list” and some of the closest tokens to it including its variants.</figcaption>
+        </figure>
+
 
         <h2>Let's Wrap Up</h2>
 
