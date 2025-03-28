@@ -2102,12 +2102,12 @@ d-appendix > distill-appendix {
       </div>
       <div >
           <h3>Published</h3>
-          <div>March 27, 2025</div>
+          <div>March 28, 2025</div>
       </div>
     </div>
     <div class="side pdf-download">
       <h3>Download</h3>
-      <a href="hf.co">
+      <a href="../assets/pdf/pdf_version.pdf">
       <img style="width: 32px;" src="../assets/images/256px-PDF.png" alt="PDF"></a>
     </div>
 `;
