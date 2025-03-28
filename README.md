@@ -1,6 +1,6 @@
 ---
-title: The Distill Template
-emoji: 🌌
+title: 'LLM Embeddings Explained: A Visual and Intuitive Guide'
+emoji: 🚀
 colorFrom: yellow
 colorTo: purple
 sdk: static
@@ -8,8 +8,9 @@ pinned: true
 license: apache-2.0
 header: mini
 app_file: dist/index.html
-thumbnail: https://huggingface.co/spaces/nanotron/distill-blog-template/resolve/main/thumbnail.png
-short_description: Craft Beautiful Blogs
+thumbnail: >-
+  https://cdn-uploads.huggingface.co/production/uploads/647f805de9c81260ff8881ee/8v52lNo2sFtNySUlVnXF4.png
+short_description: How Language Models Turn Text into Meaning, From Traditional
 ---
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
